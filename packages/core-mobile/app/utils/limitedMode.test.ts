@@ -40,7 +40,6 @@ describe('limitedMode', () => {
     expect(out[FeatureGates.FUSION_AVALANCHE_EVM]).toBe(true)
 
     // Forced-false
-    expect(out[FeatureGates.SEEDLESS_ONBOARDING_APPLE]).toBe(false)
     expect(out[FeatureGates.BRIDGE_BTC]).toBe(false)
     expect(out[FeatureGates.LEGACY_BRIDGE]).toBe(false)
     expect(out[FeatureGates.WALLET_CONNECT]).toBe(false)

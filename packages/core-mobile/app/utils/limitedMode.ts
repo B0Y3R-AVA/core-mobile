@@ -1,4 +1,5 @@
 import Config from 'react-native-config'
+import { ChainId } from '@avalabs/core-chains-sdk'
 import { FeatureFlags, FeatureGates } from 'services/posthog/types'
 
 export const isLimitedMode: boolean = Config.LIMITED_MODE === 'true'
@@ -21,12 +22,10 @@ export const LIMITED_MODE_FORCED_TRUE: FeatureGates[] = [
 ]
 
 export const LIMITED_MODE_FORCED_FALSE: FeatureGates[] = [
-  FeatureGates.SEEDLESS_ONBOARDING_APPLE,
-  FeatureGates.MNEMONIC_ONBOARDING,
+  FeatureGates.IMPORT_EXISTING_WALLET,
   FeatureGates.HARDWARE_WALLET_ONBOARDING,
   FeatureGates.ADD_WALLET,
   FeatureGates.WALLET_CONNECT,
-  FeatureGates.ACCOUNT_SWITCHER,
   FeatureGates.SETTINGS_ADVANCED,
   FeatureGates.BRIDGE_BTC,
   FeatureGates.BRIDGE_ETH,
@@ -69,6 +68,19 @@ export const applyLimitedModeOverrides = (
   }
   return overridden
 }
+
+// Allowed chain IDs in limited mode (the chains where allowlisted tokens
+// live). Used to filter network pickers and activity feed scope.
+export const LIMITED_MODE_ALLOWED_CHAIN_IDS: ReadonlySet<number> = new Set([
+  ChainId.ETHEREUM_HOMESTEAD, // 1
+  ChainId.AVALANCHE_MAINNET_ID, // 43114
+  ChainId.BITCOIN,
+  // testnet equivalents (limited mode is mainnet-only by design but harmless
+  // to allow if developer mode is somehow toggled on)
+  ChainId.ETHEREUM_TEST_SEPOLIA,
+  ChainId.AVALANCHE_TESTNET_ID,
+  ChainId.BITCOIN_TESTNET
+])
 
 // Allowlist of tokens that may be swapped or bought in limited mode.
 // Identifier scheme matches Fusion's `internalId` field.

@@ -680,6 +680,16 @@ export const selectIsSettingsAdvancedBlocked = (state: RootState): boolean => {
   )
 }
 
+export const selectIsImportExistingWalletBlocked = (
+  state: RootState
+): boolean => {
+  const { featureFlags } = state.posthog
+  return (
+    !featureFlags[FeatureGates.IMPORT_EXISTING_WALLET] ||
+    !featureFlags[FeatureGates.EVERYTHING]
+  )
+}
+
 // actions
 export const { regenerateUserId, toggleAnalytics, setFeatureFlags } =
   posthogSlice.actions

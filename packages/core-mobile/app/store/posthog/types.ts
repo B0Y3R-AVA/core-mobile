@@ -68,7 +68,8 @@ export const DefaultFeatureFlagConfig = {
   [FeatureGates.ADD_WALLET]: true,
   [FeatureGates.WALLET_CONNECT]: true,
   [FeatureGates.ACCOUNT_SWITCHER]: true,
-  [FeatureGates.SETTINGS_ADVANCED]: true
+  [FeatureGates.SETTINGS_ADVANCED]: true,
+  [FeatureGates.IMPORT_EXISTING_WALLET]: true
 }
 
 export const initialState = {

@@ -6,9 +6,9 @@ import { Redirect, useRouter } from 'expo-router'
 import React, { useCallback, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import {
+  selectIsImportExistingWalletBlocked,
   selectIsKeystoneBlocked,
-  selectIsLedgerSupportBlocked,
-  selectIsMnemonicOnboardingBlocked
+  selectIsLedgerSupportBlocked
 } from 'store/posthog'
 import AnalyticsService from 'services/analytics/AnalyticsService'
 
@@ -17,8 +17,8 @@ const AccessWalletScreen = (): JSX.Element => {
   const { navigate } = useRouter()
   const isKeystoneBlocked = useSelector(selectIsKeystoneBlocked)
   const isLedgerBlocked = useSelector(selectIsLedgerSupportBlocked)
-  const isMnemonicOnboardingBlocked = useSelector(
-    selectIsMnemonicOnboardingBlocked
+  const isImportExistingWalletBlocked = useSelector(
+    selectIsImportExistingWalletBlocked
   )
 
   const handleEnterRecoveryPhrase = useCallback((): void => {
@@ -84,7 +84,7 @@ const AccessWalletScreen = (): JSX.Element => {
     theme.colors
   ])
 
-  if (isMnemonicOnboardingBlocked) {
+  if (isImportExistingWalletBlocked) {
     return <Redirect href="/signup" />
   }
 
