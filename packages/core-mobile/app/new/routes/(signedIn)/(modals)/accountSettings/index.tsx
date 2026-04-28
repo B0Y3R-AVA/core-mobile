@@ -28,6 +28,7 @@ import React, { useCallback } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import AnalyticsService from 'services/analytics/AnalyticsService'
 import { selectContacts } from 'store/addressBook'
+import { selectIsSettingsAdvancedBlocked } from 'store/posthog'
 import {
   selectIsDeveloperMode,
   toggleDeveloperMode
@@ -49,6 +50,7 @@ const AccountSettingsScreen = (): JSX.Element => {
     theme: { colors }
   } = useTheme()
   const contacts = useSelector(selectContacts)
+  const isSettingsAdvancedBlocked = useSelector(selectIsSettingsAdvancedBlocked)
   const { navigate } = useRouter()
   const { avatar } = useAvatar()
   const appUpdateStatus = useAppUpdateStatus()
@@ -146,90 +148,105 @@ const AccountSettingsScreen = (): JSX.Element => {
         <View sx={{ gap: 24, paddingHorizontal: 16 }}>
           {renderAppUpdateBanner()}
           <View sx={{ gap: 12 }}>
-            {/* Testnet mode */}
-            <GroupList
-              data={[
-                {
-                  title: 'Testnet mode',
-                  disableRowAccessibility: true,
-                  value: (
-                    <Toggle
-                      testID={
-                        isDeveloperMode ? 'testnet_enabled' : 'testnet_disabled'
+            {!isSettingsAdvancedBlocked && (
+              <>
+                {/* Testnet mode */}
+                <GroupList
+                  data={[
+                    {
+                      title: 'Testnet mode',
+                      disableRowAccessibility: true,
+                      value: (
+                        <Toggle
+                          testID={
+                            isDeveloperMode
+                              ? 'testnet_enabled'
+                              : 'testnet_disabled'
+                          }
+                          onValueChange={onTestnetChange}
+                          value={isDeveloperMode}
+                        />
+                      )
+                    }
+                  ]}
+                  titleSx={{
+                    fontSize: 16,
+                    lineHeight: 22,
+                    fontFamily: 'Inter-Regular'
+                  }}
+                  valueSx={{ fontSize: 16, lineHeight: 22 }}
+                  separatorMarginRight={16}
+                />
+                {/* Contacts */}
+                <View>
+                  <Space y={12} />
+                  <GroupList
+                    data={[
+                      {
+                        title: 'Contacts',
+                        onPress: () => navigate('/accountSettings/addressBook'),
+                        value: (
+                          <Text
+                            variant="body2"
+                            sx={{
+                              color: colors.$textSecondary,
+                              fontSize: 16,
+                              lineHeight: 22,
+                              marginLeft: 9
+                            }}>
+                            {Object.keys(contacts).length}
+                          </Text>
+                        )
                       }
-                      onValueChange={onTestnetChange}
-                      value={isDeveloperMode}
-                    />
-                  )
-                }
-              ]}
-              titleSx={{
-                fontSize: 16,
-                lineHeight: 22,
-                fontFamily: 'Inter-Regular'
-              }}
-              valueSx={{ fontSize: 16, lineHeight: 22 }}
-              separatorMarginRight={16}
-            />
-            {/* Contacts */}
-            <View>
-              <Space y={12} />
-              <GroupList
-                data={[
-                  {
-                    title: 'Contacts',
-                    onPress: () => navigate('/accountSettings/addressBook'),
-                    value: (
-                      <Text
-                        variant="body2"
-                        sx={{
-                          color: colors.$textSecondary,
-                          fontSize: 16,
-                          lineHeight: 22,
-                          marginLeft: 9
-                        }}>
-                        {Object.keys(contacts).length}
-                      </Text>
-                    )
-                  }
-                ]}
-                titleSx={{
-                  fontSize: 16,
-                  lineHeight: 22,
-                  fontFamily: 'Inter-Regular'
-                }}
-                valueSx={{ fontSize: 16, lineHeight: 22 }}
-                separatorMarginRight={16}
-              />
-            </View>
-            <View>
-              <GroupList
-                data={[
-                  {
-                    title: 'Networks',
-                    onPress: () => navigate('/accountSettings/manageNetworks')
-                  }
-                ]}
-                titleSx={{
-                  fontSize: 16,
-                  lineHeight: 22,
-                  fontFamily: 'Inter-Regular'
-                }}
-                valueSx={{ fontSize: 16, lineHeight: 22 }}
-                separatorMarginRight={16}
-              />
-            </View>
-            <AppAppearance
-              selectAppAppearance={goToAppAppearance}
-              selectCurrency={goToCurrency}
-              selectAppIcon={goToSelectAppIcon}
-            />
+                    ]}
+                    titleSx={{
+                      fontSize: 16,
+                      lineHeight: 22,
+                      fontFamily: 'Inter-Regular'
+                    }}
+                    valueSx={{ fontSize: 16, lineHeight: 22 }}
+                    separatorMarginRight={16}
+                  />
+                </View>
+                <View>
+                  <GroupList
+                    data={[
+                      {
+                        title: 'Networks',
+                        onPress: () =>
+                          navigate('/accountSettings/manageNetworks')
+                      }
+                    ]}
+                    titleSx={{
+                      fontSize: 16,
+                      lineHeight: 22,
+                      fontFamily: 'Inter-Regular'
+                    }}
+                    valueSx={{ fontSize: 16, lineHeight: 22 }}
+                    separatorMarginRight={16}
+                  />
+                </View>
+                <AppAppearance
+                  selectAppAppearance={goToAppAppearance}
+                  selectCurrency={goToCurrency}
+                  selectAppIcon={goToSelectAppIcon}
+                />
+              </>
+            )}
             <UserPreferences
-              selectNotificationPreferences={goToNotificationPreferences}
+              selectNotificationPreferences={
+                isSettingsAdvancedBlocked
+                  ? undefined
+                  : goToNotificationPreferences
+              }
               selectSecurityPrivacy={goToSecurityPrivacy}
             />
-            <Support onPressItem={handlePressAboutItem} />
-            <About onPressItem={handlePressAboutItem} />
+            {!isSettingsAdvancedBlocked && (
+              <>
+                <Support onPressItem={handlePressAboutItem} />
+                <About onPressItem={handlePressAboutItem} />
+              </>
+            )}
           </View>
           <TouchableOpacity
             sx={{
@@ -245,36 +262,38 @@ const AccountSettingsScreen = (): JSX.Element => {
               Lock wallet
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            sx={{
-              alignItems: 'center',
-              backgroundColor: colors.$surfaceSecondary,
-              borderRadius: 12,
-              padding: 14
-            }}
-            onPress={() => {
-              showAlert({
-                title: 'Are you sure you want to delete your wallet?',
-                description:
-                  'Removing the account will delete all local information stored on this device. Your assets will remain on chain.',
-                buttons: [
-                  {
-                    text: 'Cancel'
-                  },
-                  {
-                    text: 'I understand, continue',
-                    style: 'destructive',
-                    onPress: deleteWallet
-                  }
-                ]
-              })
-            }}>
-            <Text
-              variant="body1"
-              sx={{ color: colors.$textDanger, lineHeight: 20 }}>
-              Delete wallet
-            </Text>
-          </TouchableOpacity>
+          {!isSettingsAdvancedBlocked && (
+            <TouchableOpacity
+              sx={{
+                alignItems: 'center',
+                backgroundColor: colors.$surfaceSecondary,
+                borderRadius: 12,
+                padding: 14
+              }}
+              onPress={() => {
+                showAlert({
+                  title: 'Are you sure you want to delete your wallet?',
+                  description:
+                    'Removing the account will delete all local information stored on this device. Your assets will remain on chain.',
+                  buttons: [
+                    {
+                      text: 'Cancel'
+                    },
+                    {
+                      text: 'I understand, continue',
+                      style: 'destructive',
+                      onPress: deleteWallet
+                    }
+                  ]
+                })
+              }}>
+              <Text
+                variant="body1"
+                sx={{ color: colors.$textDanger, lineHeight: 20 }}>
+                Delete wallet
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Footer */}
