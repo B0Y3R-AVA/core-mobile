@@ -13,6 +13,7 @@ import {
 import PostHogService from 'services/posthog/PostHogService'
 import AnalyticsService from 'services/analytics/AnalyticsService'
 import Logger from 'utils/Logger'
+import { isLimitedMode } from 'utils/limitedMode'
 
 const FEATURE_FLAGS_FETCH_INTERVAL = 30000 // 30 seconds
 
@@ -20,6 +21,8 @@ const fetchFeatureFlagsPeriodically = async (
   _: Action,
   listenerApi: AppListenerEffectAPI
 ): Promise<void> => {
+  // Limited mode: env overrides PostHog inside the reducer, so polling is wasted work.
+  if (isLimitedMode) return
   const { condition, dispatch } = listenerApi
 
   const distinctId = selectDistinctID(listenerApi.getState())
@@ -44,6 +47,7 @@ const posthogIdentifyUser = async (
   _: Action,
   listenerApi: AppListenerEffectAPI
 ): Promise<void> => {
+  if (isLimitedMode) return
   const distinctId = selectDistinctID(listenerApi.getState())
   await PostHogService.identifyUser(distinctId)
 }
@@ -52,6 +56,7 @@ const configure = async (
   _: Action,
   listenerApi: AppListenerEffectAPI
 ): Promise<void> => {
+  if (isLimitedMode) return
   const state = listenerApi.getState()
   const userId = selectUserID(state)
   const distinctId = selectDistinctID(state)

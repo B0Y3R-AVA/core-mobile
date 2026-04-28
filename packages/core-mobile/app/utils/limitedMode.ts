@@ -3,16 +3,6 @@ import { FeatureFlags, FeatureGates } from 'services/posthog/types'
 
 export const isLimitedMode: boolean = Config.LIMITED_MODE === 'true'
 
-// Startup diagnostic — confirms the env var was baked into the native build.
-// Safe to remove once limited mode is verified end-to-end.
-// eslint-disable-next-line no-console
-console.log(
-  '[limitedMode] Config.LIMITED_MODE =',
-  JSON.stringify(Config.LIMITED_MODE),
-  'isLimitedMode =',
-  isLimitedMode
-)
-
 export const LIMITED_MODE_FORCED_TRUE: FeatureGates[] = [
   FeatureGates.EVERYTHING,
   FeatureGates.SEEDLESS_ONBOARDING,
