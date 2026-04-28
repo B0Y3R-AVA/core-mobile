@@ -47,7 +47,6 @@ const posthogIdentifyUser = async (
   _: Action,
   listenerApi: AppListenerEffectAPI
 ): Promise<void> => {
-  if (isLimitedMode) return
   const distinctId = selectDistinctID(listenerApi.getState())
   await PostHogService.identifyUser(distinctId)
 }
@@ -56,7 +55,6 @@ const configure = async (
   _: Action,
   listenerApi: AppListenerEffectAPI
 ): Promise<void> => {
-  if (isLimitedMode) return
   const state = listenerApi.getState()
   const userId = selectUserID(state)
   const distinctId = selectDistinctID(state)
