@@ -2,6 +2,7 @@ import { View, Button, useTheme, Logos, SafeAreaView } from '@avalabs/k2-alpine'
 import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import {
+  selectIsMnemonicOnboardingBlocked,
   selectIsSeedlessOnboardingAppleBlocked,
   selectIsSeedlessOnboardingBlocked,
   selectIsSeedlessOnboardingGoogleBlocked
@@ -24,6 +25,9 @@ export default function Signup(): JSX.Element {
     useRecoveryMethodContext()
   const isSeedlessOnboardingBlocked = useSelector(
     selectIsSeedlessOnboardingBlocked
+  )
+  const isMnemonicOnboardingBlocked = useSelector(
+    selectIsMnemonicOnboardingBlocked
   )
 
   const { register, isRegistering } = useSeedlessRegister()
@@ -169,7 +173,7 @@ export default function Signup(): JSX.Element {
       </View>
       <View sx={{ padding: 16, gap: 88 }}>
         {!isSeedlessOnboardingBlocked && renderSeedlessOnboarding()}
-        {renderMnemonicOnboarding()}
+        {!isMnemonicOnboardingBlocked && renderMnemonicOnboarding()}
       </View>
     </SafeAreaView>
   )
