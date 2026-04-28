@@ -262,38 +262,36 @@ const AccountSettingsScreen = (): JSX.Element => {
               Lock wallet
             </Text>
           </TouchableOpacity>
-          {!isSettingsAdvancedBlocked && (
-            <TouchableOpacity
-              sx={{
-                alignItems: 'center',
-                backgroundColor: colors.$surfaceSecondary,
-                borderRadius: 12,
-                padding: 14
-              }}
-              onPress={() => {
-                showAlert({
-                  title: 'Are you sure you want to delete your wallet?',
-                  description:
-                    'Removing the account will delete all local information stored on this device. Your assets will remain on chain.',
-                  buttons: [
-                    {
-                      text: 'Cancel'
-                    },
-                    {
-                      text: 'I understand, continue',
-                      style: 'destructive',
-                      onPress: deleteWallet
-                    }
-                  ]
-                })
-              }}>
-              <Text
-                variant="body1"
-                sx={{ color: colors.$textDanger, lineHeight: 20 }}>
-                Delete wallet
-              </Text>
-            </TouchableOpacity>
-          )}
+          <TouchableOpacity
+            sx={{
+              alignItems: 'center',
+              backgroundColor: colors.$surfaceSecondary,
+              borderRadius: 12,
+              padding: 14
+            }}
+            onPress={() => {
+              showAlert({
+                title: 'Are you sure you want to delete your wallet?',
+                description:
+                  'Removing the account will delete all local information stored on this device. Your assets will remain on chain.',
+                buttons: [
+                  {
+                    text: 'Cancel'
+                  },
+                  {
+                    text: 'I understand, continue',
+                    style: 'destructive',
+                    onPress: deleteWallet
+                  }
+                ]
+              })
+            }}>
+            <Text
+              variant="body1"
+              sx={{ color: colors.$textDanger, lineHeight: 20 }}>
+              Delete wallet
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Footer */}

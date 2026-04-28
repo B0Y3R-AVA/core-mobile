@@ -325,7 +325,6 @@ const PortfolioHomeScreen = (): JSX.Element => {
   }, [])
 
   const openWalletsModal = useCallback(() => {
-    if (isLimitedMode) return
     navigate({
       pathname: '/wallets'
     })
